@@ -1,0 +1,25 @@
+{
+  "format": "bid-and-build-template",
+  "version": 1,
+  "title": "Build Your Perfect Dragon",
+  "description": "Spend your $20 wisely. Each trait belongs to just one dragon.",
+  "coverImage": null,
+  "startingCurrency": 20,
+  "currencySymbol": "$",
+  "minimumOpeningBid": 1,
+  "minimumBidIncrease": 1,
+  "options": [
+    {"id": "firebreathing", "title": "Firebreathing", "description": "Breathe a roaring stream of flame.", "image": null},
+    {"id": "three-heads", "title": "Three Heads", "description": "Three minds, three mouths, one impressive dragon.", "image": null},
+    {"id": "invisibility", "title": "Invisibility", "description": "Disappear whenever you choose.", "image": null},
+    {"id": "diamond-scales", "title": "Diamond Scales", "description": "A glittering coat of exceptionally tough scales.", "image": null},
+    {"id": "tiny-form", "title": "Pocket-Sized Form", "description": "Shrink to fit on a friend's shoulder.", "image": null},
+    {"id": "storm-wings", "title": "Storm Wings", "description": "Fly through fierce winds with ease.", "image": null},
+    {"id": "telepathy", "title": "Telepathy", "description": "Speak mind to mind with willing creatures.", "image": null},
+    {"id": "ice-breath", "title": "Ice Breath", "description": "Add freezing breath to your collection of tricks.", "image": null},
+    {"id": "healing-tears", "title": "Healing Tears", "description": "Your tears can heal a friend's wounds.", "image": null},
+    {"id": "treasure-sense", "title": "Treasure Sense", "description": "Know when treasure is nearby.", "image": null},
+    {"id": "ocean-lungs", "title": "Ocean Lungs", "description": "Breathe comfortably underwater.", "image": null},
+    {"id": "perfect-memory", "title": "Perfect Memory", "description": "Remember every story you have ever heard.", "image": null}
+  ]
+}
