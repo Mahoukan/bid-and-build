@@ -1,0 +1,20 @@
+# Explicit build inputs only. Secrets, local binaries, data and Git stay outside.
+**
+!Dockerfile
+!.dockerignore
+!.npmrc
+!package.json
+!package-lock.json
+!tsconfig.json
+!tsconfig.server.json
+!vite.config.ts
+!client/
+!client/**
+!server/
+!server/**
+!shared/
+!shared/**
+!engine/
+!engine/**
+!scripts/
+!scripts/start.mjs
