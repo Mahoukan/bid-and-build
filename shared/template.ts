@@ -15,7 +15,7 @@ export function base64Bytes(data: string): number {
 }
 
 // Only inert raster formats are portable. Decoding/re-encoding is an additional
-// browser boundary; future server uploads must independently decode these bytes.
+// browser boundary; server uploads must independently decode these bytes.
 export const portableImageSchema = z.strictObject({
   version: z.literal(1),
   mimeType: z.enum(['image/png', 'image/jpeg']),

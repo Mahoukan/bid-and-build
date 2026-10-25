@@ -3,7 +3,7 @@ import type Database from 'better-sqlite3';
 import { adminNameSchema } from '../../shared/admin.js';
 import { hashPassword } from './passwords.js';
 
-/** Used only by the interactive owner CLI and isolated test setup; no signup API. */
+/** Administrator creation is private to the owner CLI; there is no signup API. */
 export async function createAdministrator(db: Database.Database, username: string, password: string) {
   const name = adminNameSchema.parse(username); const encoded = await hashPassword(password);
   if (db.prepare('SELECT 1 FROM admin_accounts WHERE username = ?').get(name)) throw new Error('That administrator name already exists. Use the reset command if needed.');

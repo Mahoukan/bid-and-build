@@ -78,7 +78,7 @@ function openAuction(state: GameState, index: number, events: EngineEvent[]) {
   settleIfForced(state, events);
 }
 
-/** Pure reducer. Actor identity must come from the future server session, not a client claim. */
+/** Pure reducer. Actor identity must come from the server session, not a client claim. */
 export function transition(original: GameState, actorPlayerId: unknown, input: unknown): TransitionResult {
   const reject = (code: EngineErrorCode, message: string, extra: { minimumBid?: number } = {}): TransitionResult => ({
     ok: false, state: original, events: [], error: { code, message, ...extra },

@@ -25,7 +25,7 @@ export function usePlayerRoom(code: string, seat: RoomCredentials) {
   const pendingRef = useRef(pending);
   useEffect(() => {
     if (!connected || seat.recoveryCode) return;
-    // Upgrade a pre-M6 seat without silently replacing an existing private code.
+    // Upgrade a legacy seat without silently replacing an existing private code.
     let current = true;
     void ensureCode(seat).then((next) => { if (current && next.recoveryCode) setNotice('Your private recovery code is ready in Game menu. Keep a private copy.'); }).catch(() => { if (current) setNotice('Open Game menu to generate a private recovery code before changing devices.'); });
     return () => { current = false; };

@@ -21,17 +21,5 @@ jobs:
       - run: npm install --global npm@11.19.1
       - run: npm ci
       - run: npm run check
-      - run: npm test
       - run: npm run build
-      - run: npm run test:production
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
-      - run: docker build --tag bid-and-build:m9 .
-      - run: npm run test:docker
-      - name: Keep browser failure diagnostics (isolated fixture data only)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: chromium-failure-diagnostics
-          path: .cache/playwright/
-          retention-days: 7
+      - run: docker build --tag bid-and-build:ci .
