@@ -12,11 +12,14 @@ try {
     console.log(`Bid & Build server listening on ${config.host}:${config.port} (${config.mode}).`);
     console.log(`Health: http://localhost:${config.port}/health`);
   });
+  let stopping = false;
   const shutdown = () => {
+    if (stopping) return;
+    stopping = true;
     console.log('Closing Bid & Build.');
-    const timeout = setTimeout(() => process.exit(1), 10000);
+    const timeout = setTimeout(() => { console.error('Shutdown deadline reached; interrupted work will recover on restart.'); process.exit(1); }, 25000);
     timeout.unref();
-    void runtime.close().then(() => clearTimeout(timeout));
+    void runtime.close().then(() => clearTimeout(timeout), () => { console.error('Shutdown failed.'); process.exit(1); });
   };
   process.once('SIGINT', shutdown);
   process.once('SIGTERM', shutdown);

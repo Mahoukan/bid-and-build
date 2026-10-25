@@ -1,6 +1,9 @@
 import type { AuctionSettings } from '../shared/contracts.js';
 
-// Pure module boundary. Auction transitions will be implemented in Milestone 2.
+export { createGame, transition } from './transition.js';
+export { minimumBid, parseGameState } from './state.js';
+export type { GameState, GameCommand, GameInput, EngineEvent, TransitionResult } from '../shared/game.js';
+
 export function defaultAuctionSettings(): AuctionSettings {
   return {
     startingCurrency: 20,

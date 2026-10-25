@@ -84,6 +84,8 @@ User check: host in one browser profile, join in another, bid, give up, refresh 
 
 **Milestone 5 — Finished game screens and optional display**
 
+Milestone 10 supersedes only the acquired-build/result player tabs, item pages and related checks below. Preserve the remaining fitted-layout, control, privacy and display requirements.
+
 ```text
 Implement Milestone 5 with two deliberate responsive compositions: landscape website and portrait phone. Read the layout requirements in PROJECT_BRIEF.md. /room/:code is a full player interface in both orientations, with secondary host controls only for the host player.
 
@@ -144,6 +146,8 @@ User check: create your admin in a terminal; publish a template; host it as a gu
 
 **Milestone 8 — Local appearance and final viewport polish**
 
+Milestone 10 supersedes build/result pagination below with shared collections and bounded vertical overflow. Description/history paging and all appearance/privacy requirements remain.
+
 ```text
 Implement Milestone 8. Add one simple Appearance panel with live preview, light/dark mode, accent colour, background-image upload/preview/removal, glassy surface option, and Minimal/Glass/Neon/Paper presets. Keep a clean default and Reset to Defaults.
 
@@ -179,6 +183,24 @@ Do not push or deploy automatically. Report files changed, checks run and result
 ```
 
 User check: complete ACCEPTANCE-CHECKLIST.md, then follow docs/COOLIFY-SETUP.md. Suggested commit: `M9: deployment-ready build`.
+
+**Milestone 10 - Compact game board and full-build comparison**
+
+Implement the focused UI refinement in the existing project. Preserve all uncommitted M1-M9 work; no reset, commit, push or deployment. M9 Docker, hosted Linux CI, physical-device and Coolify checks remain outstanding.
+
+Show acquired collections together using a reusable compact thumbnail/name/paid-price presentation. Names must wrap and stay identifiable without hover or opening details. Full descriptions/larger images open on click/tap/keyboard; missing images have a fallback. Never expose unrevealed future options.
+
+Landscape: bounded current auction with controls, all players' collections and name/balance/item counts in stable seat order. Portrait: current option/high bid, own/all balances, pause/connection and primary controls stay visible; persistent Your build and one Compare builds surface showing everyone with current status and a clear return. Preserve separate confirmed Bet All and secondary host controls. Purchases appear once after authoritative settlement, with a brief reduced-motion-aware highlight.
+
+Results: every player's full collection, paid prices, spent total and balance together as the main surface. Aligned desktop columns; readable phone player sections, never five narrow columns. Keep Play Again secondary; distinguish unclaimed/unplayed without future leaks or scoring.
+
+Fit 360x640, 390x844, 1280x720 and 1440x900. Aim for all 12 sample results in one viewport for ordinary 2-3 players, including uneven ownership. Large collections use one bounded vertical scroll surface with clear/sticky player headings; no nested/horizontal scroll, clipped names, item carousels, player selectors, hidden items or new template-size limit. Accessibility zoom/text enlargement may reflow. Reduce excess spacing/artwork before type/touch targets.
+
+Reuse authoritative snapshots, protected media, shared display and theme tokens. Preserve engine, schema, money, recovery, pause, permissions, privacy and local storage. Update conflicting AGENTS.md, PROJECT_BRIEF.md, ACCEPTANCE-CHECKLIST.md and older milestone notes.
+
+Run check/test/build and browser regressions. Replace only superseded pager expectations; retain meaningful coverage. Cover 2/3/5 seats, empty/uneven builds, full sample, long collections/names/titles, missing images, keyboard details, overflow reachability, fitted actions and read-only display. Inspect screenshots at all four sizes and representative light/dark/glass/background themes. Record actual results and manual limitations in PROGRESS.md. Finish with launch URL, short manual review, files changed and suggested commit. Stop for review.
+
+Suggested commit: `M10: compact game board and full-build comparison`.
 
 **Continuation prompt**
 

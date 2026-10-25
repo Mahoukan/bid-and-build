@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { loadEnvFile } from 'node:process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isIP } from 'node:net';
 import { z } from 'zod';
 
 function findProjectRoot() {
@@ -26,6 +27,12 @@ const envSchema = z.object({
     return ['http:', 'https:'].includes(url.protocol) && url.origin === value;
   }, 'Use an HTTP(S) origin without a path or trailing slash.').default('http://localhost:5173'),
   SESSION_SECRET: z.string().min(64).max(1024),
+  // Never trust arbitrary forwarded headers or a hop count. Only explicit
+  // operator-selected proxy addresses/networks can supply a client's address.
+  TRUST_PROXY: z.string().max(1024).default('').transform((value) => value.split(',').map((entry) => entry.trim()).filter(Boolean)).refine((entries) => entries.every((entry) => {
+    const [address, prefix, extra] = entry.split('/'); const version = isIP(address ?? '');
+    return version && extra === undefined && (prefix === undefined || (/^\d{1,3}$/.test(prefix) && Number(prefix) > 0 && Number(prefix) <= (version === 4 ? 32 : 128)));
+  }), 'Use explicit proxy IP addresses or CIDRs, or leave empty.'),
 });
 
 export function parseConfig(environment: NodeJS.ProcessEnv, root = projectRoot) {
@@ -43,6 +50,7 @@ export function parseConfig(environment: NodeJS.ProcessEnv, root = projectRoot) 
     dataDir: resolve(root, env.DATA_DIR),
     appOrigin: env.APP_ORIGIN,
     sessionSecret: env.SESSION_SECRET,
+    trustProxy: env.TRUST_PROXY,
     clientDir: resolve(root, 'dist/client'),
   };
 }

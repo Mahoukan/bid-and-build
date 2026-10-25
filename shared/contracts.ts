@@ -15,8 +15,4 @@ export type AuctionSettings = z.infer<typeof auctionSettingsSchema>;
 
 export { healthSchema, type Health } from './health.js';
 
-// Infrastructure only. No player identities or room data exist in Milestone 1.
-export interface ServerToClientEvents {
-  'server:ready': (payload: { protocolVersion: 1 }) => void;
-}
-export type ClientToServerEvents = Record<string, never>;
+// Transport events live in rooms.ts; engine rules remain transport-independent.

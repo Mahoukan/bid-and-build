@@ -2,6 +2,8 @@
 
 Run these after the relevant milestones and again before deployment. Record failures or untested items in PROGRESS.md. Use separate browser profiles for independent players. Do not mark a check done merely because Codex wrote a test for it.
 
+Milestone 9 source/automated evidence and outstanding device/deployment checks are recorded in [docs/ACCEPTANCE-AUDIT.md](docs/ACCEPTANCE-AUDIT.md). These boxes remain the owner's manual review checklist; automated coverage is not a claim of physical-device or Coolify verification.
+
 **Builder and storage**
 
 - [ ] Import samples/dragon-game.json and edit every setting.
@@ -59,7 +61,11 @@ Run these after the relevant milestones and again before deployment. Record fail
 - [ ] Portrait phone is fully playable, including custom bidding and the on-screen keyboard.
 - [ ] At 360×640, 390×844, 1280×720 and 1440×900, normal game screens need no page scrolling.
 - [ ] With five players and long labels, all balances and primary bid controls remain visible and usable.
-- [ ] Builds, history, long descriptions and results remain fully accessible through tabs/pages.
+- [ ] Landscape shows every player's collection together in stable order; portrait has persistent Your build and one Compare builds surface with current status and a clear return.
+- [ ] Results show every player, every acquired option, paid prices, total spent and balance together; no player tabs, item pages or scored winner.
+- [ ] Acquired names wrap without clipping; missing images have a fallback; full details open by tap/click/keyboard and focus returns on close.
+- [ ] Ordinary 12-option sample results fit for 2–3 players, including uneven ownership. Longer collections use one bounded vertical scroll surface; the last item is reachable while primary controls remain fitted. No nested/horizontal scrolling.
+- [ ] Empty builds, 5-player comparisons and unclaimed/unplayed items remain understandable without leaking unrevealed details. History and descriptions remain fully reachable through dialogs/pages.
 - [ ] Light/dark mode, accents, local backgrounds, glass and every preset work without breaking layout or contrast.
 - [ ] Appearance survives refresh locally and does not change another browser's view.
 - [ ] Reset appearance leaves drafts and player identity intact.

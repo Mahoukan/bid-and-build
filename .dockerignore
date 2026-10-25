@@ -16,5 +16,21 @@
 !shared/**
 !engine/
 !engine/**
+!samples/
+!samples/dragon-game.json
 !scripts/
 !scripts/start.mjs
+# Also exclude private/generated files nested inside an allowed source folder.
+**/.env
+**/.env.*
+**/node_modules
+**/.git
+**/*.sqlite
+**/*.sqlite-*
+**/*.db
+**/*.db-*
+**/*.pem
+**/*.key
+**/*.log
+**/.DS_Store
+**/Thumbs.db

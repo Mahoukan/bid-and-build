@@ -10,6 +10,9 @@ describe('runtime configuration', () => {
   it('uses root-relative data paths and rejects invalid settings without exposing values', () => {
     expect(parseConfig(validEnv).dataDir).toBe(join(projectRoot, 'data'));
     expect(parseConfig({ ...validEnv, PORT: '3000' }).port).toBe(3000);
+    expect(parseConfig(validEnv).trustProxy).toEqual([]);
+    expect(parseConfig({ ...validEnv, TRUST_PROXY: '172.18.0.2, ::1/128' }).trustProxy).toEqual(['172.18.0.2', '::1/128']);
+    for (const TRUST_PROXY of ['true', '1', '0.0.0.0/0', '::/0', '10.0.0.0/33', 'example.com']) expect(() => parseConfig({ ...validEnv, TRUST_PROXY })).toThrow('TRUST_PROXY');
     for (const PORT of ['0', '3000.5', '-1', '65536', '3e3', '']) {
       expect(() => parseConfig({ ...validEnv, PORT })).toThrow('PORT');
     }

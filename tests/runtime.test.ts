@@ -15,8 +15,8 @@ describe('real HTTP and Socket.IO runtime', () => {
   let origin: string;
   beforeAll(async () => {
     directory = await mkdtemp(join(tmpdir(), 'bid-build-runtime-test-'));
-    const clientDir = join(directory, 'test-client');
-    await mkdir(clientDir);
+    const clientDir = join(directory, '.test-only-parent', 'test-client');
+    await mkdir(clientDir, { recursive: true });
     // Isolated routing fixture, never served by the application build.
     await writeFile(join(clientDir, 'index.html'), '<!doctype html><title>Test-only SPA fixture</title>');
     runtime = createRuntime({
@@ -35,9 +35,9 @@ describe('real HTTP and Socket.IO runtime', () => {
     const response = await fetch(`${origin}/health`);
     expect(response.status).toBe(200);
     expect(response.headers.get('cache-control')).toBe('no-store');
-    expect(healthSchema.parse(await response.json())).toEqual({ status: 'ready', service: 'bid-and-build', schemaVersion: 1 });
+    expect(healthSchema.parse(await response.json())).toEqual({ status: 'ready', service: 'bid-and-build', schemaVersion: 4 });
   });
-  it.each(['/', '/builder', '/room/TEST', '/display/TEST', '/admin'])(
+  it.each(['/', '/builder', '/room/TEST', '/display/TEST', '/admin', '/templates'])(
     'supports direct app navigation: %s', async (path) => {
       const response = await fetch(origin + path, { headers: { Accept: 'text/html' } });
       expect(response.status).toBe(200);
