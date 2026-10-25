@@ -1,19 +1,19 @@
 # Bid & Build project instructions
 
-Build a real multiplayer website for a GitHub repository deployed through Coolify. The owner uses VS Code on Windows. This folder begins as an instruction pack, not an implemented app.
+Build a real multiplayer website for a GitHub repository deployed through Coolify. The owner uses VS Code on Windows. The application is implemented; preserve its working features.
 
-Read PROJECT_BRIEF.md, CODEX_PROMPTS.md and PROGRESS.md before implementing a milestone. The user's latest instructions take precedence. This pack incorporates the latest decisions; older prototypes or prompt files must not reintroduce free leftovers, spectator players or a non-playing host.
+Read README.md and the relevant operational guides in docs/ before making changes. The user's latest instructions take precedence. Preserve the product and auction rules below.
 
 **Working agreement**
 
-- Implement the requested milestone completely, run relevant checks, correct failures, update PROGRESS.md and stop at its review checkpoint. Continue autonomously within that milestone; make reasonable implementation decisions without asking about routine choices.
+- Complete the requested change, run relevant checks, correct failures and stop within the requested scope. Make reasonable implementation decisions without asking about routine choices.
 - Write working files. Plans and mock data alone do not complete a milestone. Clearly label development fixtures and never use fake state in the finished game.
 - Preserve existing user changes. Do not reset the repository, overwrite unrelated files, publish to GitHub or deploy without the user's instruction. Local source edits and necessary dependency installation are part of the requested build. Respect the environment's permission controls.
 - Use npm with one root package-lock.json and cross-platform scripts. Do not mix package managers. Use Node.js 24 LTS and pin tested dependency versions through the lockfile; confirm current package compatibility when installing.
 - Keep a small understandable structure: client/, server/, shared/, engine/, tests/ and docs/, or equivalent clean boundaries. Do not create unnecessary services. React + Vite + TypeScript, Node + Express + Socket.IO, SQLite, and a single Docker app are the agreed stack.
 - Use maintained SQLite bindings compatible with Node 24, Windows development and Debian-based Docker. Document any native build requirements. Prefer a straightforward adapter with transactions over a second database service.
 - Never invent test results. Report checks actually run, blockers, and manual checks still needed. Do not weaken tests to conceal an application bug. Avoid tests that only repeat implementation details.
-- After each stage, report the result, commands run, the launch URL, a short manual check and a suggested commit message. Keep PROGRESS.md accurate enough for another Codex chat to resume.
+- After each stage, report the result, commands run, the launch URL, a short manual check and a suggested commit message. Update the relevant documentation when behaviour or operating instructions change.
 
 **Product requirements**
 

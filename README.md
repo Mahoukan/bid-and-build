@@ -1,6 +1,6 @@
 # Bid & Build
 
-A multiplayer auction party game for **2–5 players, including the host**, implemented through Milestone 10. Create local designs with images, host a real room, invite friends and bid with server-authoritative balances. Rooms, purchase ledgers and receipts persist in SQLite. Refresh restores your seat; a private code recovers it on another device. Disconnects pause play until the host resumes, and confirmed Sit Out handles permanent departures. Fitted phone/desktop screens and a read-only shared display are available. Administrators can publish permanent templates; guests can browse and host them without an account. Each browser has its own saved appearance, including light/dark mode, accents, local backgrounds and Minimal/Glass/Neon/Paper presets. Docker packaging and Linux CI are supplied; actual Docker/Linux/Coolify execution is still awaiting an available daemon and the owner's publication. See [PROGRESS.md](PROGRESS.md) for verified results and remaining checks.
+A multiplayer auction party game for **2–5 players, including the host**. Create local designs with images, host a real room, invite friends and bid with server-authoritative balances. Rooms, purchase ledgers and receipts persist in SQLite. Refresh restores your seat; a private code recovers it on another device. Disconnects pause play until the host resumes, and confirmed Sit Out handles permanent departures. Fitted phone/desktop screens and a read-only shared display are available. Administrators can publish permanent templates; guests can browse and host them without an account. Each browser has its own saved appearance, including light/dark mode, accents, local backgrounds and Minimal/Glass/Neon/Paper presets. Docker packaging and Linux CI are supplied; actual Docker/Linux/Coolify execution is still awaiting an available daemon and the owner's publication. See the verification status below for results and remaining checks.
 
 ## Run locally
 
@@ -16,7 +16,7 @@ npm.cmd run dev
 
 Open **http://localhost:5173**. The backend health endpoint is **http://localhost:3000/health**; `/health` on port 5173 is also proxied to it. Stop development with Ctrl+C. `dev` starts both processes, watches changes and runs setup automatically. Ports are strict so a second launch cannot silently switch the frontend to a different origin.
 
-This machine initially had Node 25.5.0. For Milestone 1 verification, a checksum-verified portable Node 24.22.1 with npm 11.19.1 was downloaded into ignored `.tools/`. If it is still present, select it for the current PowerShell terminal before the commands above:
+This machine initially had Node 25.5.0. For local verification, a checksum-verified portable Node 24.22.1 with npm 11.19.1 was downloaded into ignored `.tools/`. If it is still present, select it for the current PowerShell terminal before the commands above:
 
 ```powershell
 $env:PATH = "$PWD\.tools\node-v24.22.1-win-x64;$env:PATH"
@@ -74,21 +74,21 @@ Open **http://localhost:3000**. Return `APP_ORIGIN` to `http://localhost:5173` b
 
 Run `npm run build` before `db:migrate` so it includes the latest migration code. Ordinary server startup also migrates automatically. Never edit an applied migration; append a versioned migration to `server/db/migrations.ts`. Unknown/newer schema history fails startup instead of silently downgrading data. Keep separate data directories for local work, tests and deployment; tests never clear `./data`.
 
-The tests cover the pure engine, templates/images, configuration, migrations, HTTP and real Socket.IO multiplayer: 2–5 seats, concurrent joins/bids, receipts, rollback, restart, atomic takeover/recovery, automatic pause, Sit Out and future-content/media disclosure. Installed-Chrome checks cover the [local builder](docs/TEMPLATE-FORMAT.md). Playwright covers the [fitted layouts, multiplayer flows and display permissions](docs/GAME-SCREENS.md), plus [private recovery and interrupted requests](docs/RECOVERY.md). Set `CHROME_PATH` to an installed Chromium executable, or install Playwright Chromium with `npx playwright install chromium` first. Administrator authorization, template storage and private setup commands are documented in [docs/ADMIN.md](docs/ADMIN.md).
+The tests cover the pure engine, templates/images, configuration, migrations, HTTP and real Socket.IO multiplayer: 2–5 seats, concurrent joins/bids, receipts, rollback, restart, atomic takeover/recovery, automatic pause, Sit Out and future-content/media disclosure. Installed-Chrome checks cover the [local builder](docs/TEMPLATE-FORMAT.md). Playwright covers fitted layouts, multiplayer flows and display permissions, plus [private recovery and interrupted requests](docs/RECOVERY.md). Set `CHROME_PATH` to an installed Chromium executable, or install Playwright Chromium with `npx playwright install chromium` first. Administrator authorization, template storage and private setup commands are documented in [docs/ADMIN.md](docs/ADMIN.md).
 
 Recovery check: open **Game menu → Private recovery code** and keep a private copy. After a disconnect, open the room link in another browser profile, choose **Recover an existing seat**, and enter that code. The original host must explicitly Resume. Recovery works in full rooms and preserves money and binding bids. **Replace Code** invalidates the previous code; **Sit Out** is a separate confirmed host action for an offline permanent departure. Details, expiry and restart behavior are in [docs/RECOVERY.md](docs/RECOVERY.md).
 
 Foundation check: open home and Builder, resize to a narrow phone viewport, navigate with Tab, and verify the footer says **Server ready**. Refresh each route directly. Confirm `/health` says `ready`. Administrator login is available after private CLI setup.
 
-Milestone 2 review: run `npm.cmd test -- tests/engine.test.ts --reporter=verbose` and read [the auction engine contract](docs/AUCTION-ENGINE.md). The 90 engine cases cover 2–5 seats, sequential concessions, paid automatic purchases, binding bids, paused actions, terminal End and fresh runs. Four cases additionally exercise 80 generated complete games with money conservation and deterministic replay. No fake game state is displayed.
+Engine check: run `npm.cmd test -- tests/engine.test.ts --reporter=verbose`. Tests cover sequential concessions, paid automatic purchases, binding bids, paused actions, terminal End and deterministic full-game traces. Auction rules are retained in AGENTS.md.
 
-Milestone 3 review: open **http://localhost:5173/builder**, select **Use dragon starter**, edit the title/options, upload a PNG or JPEG, and **Save draft**. Refresh, export JSON, and import it in another browser profile. Check that text, order and images survive. **Save as copy** duplicates the open draft. Saving is explicit; edits show **Unsaved changes** and successful saves say **Saved to this browser**. Export backups before clearing site data or moving origins. Editing and saving send no drafts to the server; explicit hosting sends a temporary game copy.
+Builder check: open **http://localhost:5173/builder**, select **Use dragon starter**, edit the title/options, upload a PNG or JPEG, and **Save draft**. Refresh, export JSON, and import it in another browser profile. Check that text, order and images survive. **Save as copy** duplicates the open draft. Saving is explicit; edits show **Unsaved changes** and successful saves say **Saved to this browser**. Export backups before clearing site data or moving origins. Editing and saving send no drafts to the server; explicit hosting sends a temporary game copy.
 
-Milestone 4 review: **Host game**, enter your player name, and open the invite link in another browser profile. Join and Start, then bid and Give Up. Refresh the guest; verify the same seat returns and the host must Resume. Finish the run and try Play Again. A second controlling tab requires explicit takeover. [Multiplayer storage, transport and verification](docs/MULTIPLAYER.md) explains receipts, paused restart and protected images.
+Multiplayer check: **Host game**, enter your player name, and open the invite link in another browser profile. Join and Start, then bid and Give Up. Refresh the guest; verify the same seat returns and the host must Resume. Finish the run and try Play Again. A second controlling tab requires explicit takeover.
 
-Gameplay review (Milestone 10 supersedes the earlier build/result pagers): resize between desktop and portrait phone. Check that every balance, current option, high bid and main action stays visible. Inspect the inline collections, persistent phone Your build and Compare builds, then compare everyone together in results. Use Details/History for longer information; use **More** for a custom bid or confirmed Bet All. **Game menu** holds host controls, invite link/QR and **Open shared display**. Open that display on another screen, try Fullscreen and close it during play; it must not occupy a seat or pause the game. For casting, use ordinary browser/device mirroring controls; actual device casting remains a manual check. No native casting SDK is used. See [game screen and display documentation](docs/GAME-SCREENS.md) for the remaining device checks.
+Gameplay check: resize between desktop and portrait phone. Check that every balance, current option, high bid and main action stays visible. Inspect the inline collections, persistent phone Your build and Compare builds, then compare everyone together in results. Use Details/History for longer information; use **More** for a custom bid or confirmed Bet All. **Game menu** holds host controls, invite link/QR and **Open shared display**. Open that display on another screen, try Fullscreen and close it during play; it must not occupy a seat or pause the game. For casting, use ordinary browser/device mirroring controls; actual device casting remains a manual check. No native casting SDK is used.
 
-## Administrator setup (Milestone 7)
+## Administrator setup
 
 From a private interactive terminal in this repository, select Node 24, then run:
 
@@ -103,11 +103,11 @@ To reset one account privately, run `npm.cmd run admin:reset-password` and compl
 
 Review check: publish a design with pictures, host it as a guest in another browser profile, and invite a second player. Start, then edit/unpublish/delete the source; the active room must retain its original content and images. Guest drafts still save locally without login.
 
-## Appearance (Milestone 8)
+## Appearance
 
 Open **Appearance** in the site header or **Game menu**; the shared display has its own Appearance button. Changes preview immediately. **Save appearance** keeps them in this browser; closing the panel discards unsaved changes. Choose Minimal/Glass/Neon/Paper, light/dark mode, an accent, a local PNG/JPEG background and glass surfaces. **Reset to Defaults** preserves drafts and player identity.
 
-Personal backgrounds and preferences are never uploaded or included in template exports. A recovered seat uses the destination browser’s appearance. The existing phone/landscape layouts keep their controls and compact acquired collections across themes. [Appearance storage, accessibility and verification](docs/APPEARANCE.md) explains limits and remaining real-device checks.
+Personal backgrounds and preferences are never uploaded or included in template exports. A recovered seat uses the destination browser’s appearance. The existing phone/landscape layouts keep their controls and compact acquired collections across themes. Check saved appearance, cancellation and Reset on each device; Reset must preserve drafts and player identity. Reduced-motion and accessibility reflow remain supported.
 
 ## Project boundaries
 
@@ -152,4 +152,20 @@ Back up with `npm run db:backup -- ./backups/NEW_NAME` after creating the parent
 
 The [Linux CI workflow](.github/workflows/ci.yml) performs clean install, lint/typecheck, unit/integration tests, build, compiled production smoke, all Chromium scenarios and the Docker named-volume smoke. It has read-only repository permissions and no deployment credentials or publishing steps. Its first hosted Linux run remains outstanding until the owner publishes the repository. Local checks do not prove the Linux image passed.
 
-After reviewing [ACCEPTANCE-CHECKLIST.md](ACCEPTANCE-CHECKLIST.md) and [the recorded audit](docs/ACCEPTANCE-AUDIT.md), review/commit the source, tests, one root lockfile and documentation in VS Code, publish to your intended GitHub repository and require a green Linux CI run. Then follow [the Coolify guide](docs/COOLIFY-SETUP.md): one instance, persistent `/data`, stable secret, actual HTTPS origin, and **Consistent name (no rolling updates)** with a 30-second stop grace period. Verify the old process stops before its replacement starts. No GitHub push or deployment has been performed by Codex.
+After completing the checks below, review/commit the source, tests, one root lockfile and documentation in VS Code, publish to your intended GitHub repository and require a green Linux CI run. Then follow [the Coolify guide](docs/COOLIFY-SETUP.md): one instance, persistent `/data`, stable secret, actual HTTPS origin, and **Consistent name (no rolling updates)** with a 30-second stop grace period. Verify the old process stops before its replacement starts.
+
+## Verification status
+
+Last application verification (25 October 2026): lint and both TypeScript checks, production build, **230 unit/integration tests** and **28 browser scenarios** passed. LAN HTTP joining, private recovery, lost-response retries and restart with a binding bid are covered. These are recorded results, not a claim that later edits have been tested. The documentation cleanup checked local links and removed stale references; it did not change application code or rerun application tests.
+
+The full browser runner uses four sequential isolated shards with temporary databases. LAN tests additionally use port 3198 and a Chromium-only hostname mapping to exercise an actual insecure HTTP context. Focus them with `npm.cmd run test:e2e -- tests/e2e/lan.spec.ts`. Reports are in ignored `.cache/playwright/report/`; traces contain test credentials and should remain private.
+
+Before deployment:
+
+- Test on actual phones and intended desktop browsers: joining, bidding, refresh/pause/Resume, private recovery, browser bars, rotation, keyboards, touch, zoom, screen readers and shared-display mirroring. Use separate profiles for independent players; tabs in one profile share a seat.
+- Run the Docker smoke test and require passing hosted Linux CI. Docker/Linux/Coolify execution has not yet been verified here.
+- Verify HTTPS/admin sessions, exact origin/trusted proxy settings, persistent storage and stop-before-start updates with a paused game and no duplicate charge.
+- Rehearse backup and restore into separate storage, keeping the matching secret privately and an off-server backup.
+- Address the existing high-severity transitive body-parser advisory recorded in [dependency notes](docs/DEPENDENCIES.md).
+
+Documentation: [project rules](AGENTS.md), [deployment](docs/COOLIFY-SETUP.md), [backup/restore](docs/BACKUP-RESTORE.md), [admin](docs/ADMIN.md), [seat recovery](docs/RECOVERY.md), [template format](docs/TEMPLATE-FORMAT.md), and [dependencies/native requirements](docs/DEPENDENCIES.md).

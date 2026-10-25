@@ -52,7 +52,7 @@ Browser requests always include the 256-bit request key. API callers may omit it
 
 ## Verification and owner check
 
-`npm run check`, `npm test` and `npm run test:e2e` cover the engine, real HTTP/Socket.IO, database migration/restart and isolated browser contexts. To run only recovery browser scenarios: `npm run test:e2e -- --grep M6`. See PROGRESS.md for actual results.
+`npm run check`, `npm test` and `npm run test:e2e` cover the engine, real HTTP/Socket.IO, database migration/restart and isolated browser contexts. To run only recovery browser scenarios: `npm run test:e2e -- --grep M6`. See [README verification status](../README.md#verification-status) for recorded results.
 
 Host and join from separate browser profiles. Save both private codes, bid, and close a player's tab: the game should pause with the bid intact. Recover that seat in a fresh profile using the room and private codes, then explicitly Resume as host. Try replacing a code and rejecting its previous value. For a permanently departed guest, confirm Sit Out while paused, then Resume and check the binding bid still settles normally. Use a read-only display alongside it and verify closing the display does not pause.
 

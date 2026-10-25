@@ -40,7 +40,7 @@ The initial install reported zero known vulnerabilities. This is a point-in-time
 
 Registry metadata was checked before installing `@playwright/test` **1.64.1** (Node >=20), `qrcode` **1.5.4** (Node >=10.13.0) and `@types/qrcode` **1.5.6**. All support the selected Node 24 toolchain and are pinned in the root lockfile. Playwright and the QR types are development dependencies; `qrcode` produces lobby invitation QR codes locally in the browser. No external QR service receives invite data.
 
-The tests use the installed Chrome executable through `CHROME_PATH`, fresh contexts and an isolated real production server. Other machines can install Playwright's Chromium; see `GAME-SCREENS.md`. Docker's runtime dependency stage omits Playwright and browser binaries. Both npm installations reported zero known vulnerabilities at install time. This does not replace application or deployment security review.
+The tests use the installed Chrome executable through `CHROME_PATH`, fresh contexts and an isolated real production server. Other machines can install Playwright's Chromium; see [README checks](../README.md#commands-and-checks). Docker's runtime dependency stage omits Playwright and browser binaries. Both npm installations reported zero known vulnerabilities at install time. This does not replace application or deployment security review.
 
 ## Milestone 7 authentication (24 October 2026)
 

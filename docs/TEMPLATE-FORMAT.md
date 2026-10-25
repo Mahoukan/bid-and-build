@@ -1,6 +1,6 @@
 # Local drafts and portable templates
 
-Milestone 3 added the browser-local builder. Editing, saving and importing remain entirely local. Milestone 4 now adds explicit hosting of a temporary server room snapshot; see `MULTIPLAYER.md`. Permanent server templates remain a later milestone. The selectable starter is the repository's unchanged `samples/dragon-game.json`. Selecting it creates an unsaved local copy; it never silently populates the draft library.
+The browser-local builder keeps editing, saving and importing local. Explicit hosting sends a temporary server room snapshot. Administrators can also publish permanent templates; see [ADMIN.md](ADMIN.md). The selectable starter is the repository's unchanged `samples/dragon-game.json`. Selecting it creates an unsaved local copy; it never silently populates the draft library.
 
 ## Portable JSON version 1
 
@@ -33,7 +33,7 @@ An absent image is exactly `null`. An image is an object with its own representa
 { "version": 1, "mimeType": "image/png", "data": "<padded standard base64 bytes>" }
 ```
 
-The portable validator accepts `image/png` and `image/jpeg`. `data` contains bytes only, without a `data:` prefix, whitespace, URL, path or blob reference. It validates canonical base64, byte limits, MIME/header agreement and dimensions. Header validation alone does not prove that an image decodes: browser imports additionally decode and re-encode every image before replacing the editor. Milestone 4 hosting independently validates and re-encodes images with Sharp on the server; the shared schema alone is not that server boundary. See `MULTIPLAYER.md` for protected room media and storage.
+The portable validator accepts `image/png` and `image/jpeg`. `data` contains bytes only, without a `data:` prefix, whitespace, URL, path or blob reference. It validates canonical base64, byte limits, MIME/header agreement and dimensions. Header validation alone does not prove that an image decodes: browser imports additionally decode and re-encode every image before replacing the editor. Room hosting independently validates and re-encodes images with Sharp on the server; the shared schema alone is not that server boundary. Room assets are stored independently in SQLite and served through authorized routes only after their option is revealed.
 
 ## Image and file limits
 
@@ -57,7 +57,7 @@ Save is explicit; there is no background autosave or upload. Incomplete fields c
 
 Save, revision comparison and last-draft selection commit together. A save from a stale tab fails instead of overwriting another tab's revision. The user can export, reload, or save a new copy. Quota, blocked/disabled storage, failed transactions and conflicting writes show errors without clearing edits or claiming success. The builder can still export valid designs when browser storage is unavailable. Export starts a browser download; it does not claim that the file has been saved to disk.
 
-Local drafts belong to the browser profile and origin (scheme, host and port). `localhost:5173`, `localhost:3000`, a LAN address and a deployed domain have separate stores. Clearing site data can remove drafts. Export JSON to back them up or move them. Draft storage is separate from future personal appearance and player identity storage. No appearance preferences, background images, admin sessions or recovery credentials enter template files.
+Local drafts belong to the browser profile and origin (scheme, host and port). `localhost:5173`, `localhost:3000`, a LAN address and a deployed domain have separate stores. Clearing site data can remove drafts. Export JSON to back them up or move them. Draft storage is separate from personal appearance and player identity storage. No appearance preferences, background images, admin sessions or recovery credentials enter template files.
 
 ## Verification
 
@@ -69,6 +69,6 @@ $env:CHROME_PATH = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
 node scripts/check-builder-browser.mjs
 ```
 
-On Linux/macOS, select Node 24 normally and pass `CHROME_PATH=/path/to/chromium node scripts/check-builder-browser.mjs`. `BUILDER_ORIGIN` optionally overrides `http://localhost:5173`; this script requires Vite because some boundary checks import source modules. It tests actual IndexedDB persistence, native file selection, real canvas processing, downloads and import in a second isolated profile, save conflicts, injected quota exhaustion, validation, text escaping, navigation protection, keyboard reordering, four viewport widths and no network writes. Screenshots and exported fixtures are left in the ignored run directory for inspection. Gameplay E2E coverage remains a later milestone.
+On Linux/macOS, select Node 24 normally and pass `CHROME_PATH=/path/to/chromium node scripts/check-builder-browser.mjs`. `BUILDER_ORIGIN` optionally overrides `http://localhost:5173`; this script requires Vite because some boundary checks import source modules. It tests actual IndexedDB persistence, native file selection, real canvas processing, downloads and import in a second isolated profile, save conflicts, injected quota exhaustion, validation, text escaping, navigation protection, keyboard reordering, four viewport widths and no network writes. Screenshots and exported fixtures are left in the ignored run directory for inspection. Run `npm run test:e2e` for the gameplay browser suite.
 
-Manual check: select the dragon starter, edit it, upload an image, Save, refresh, Export JSON, then import in another browser/profile. Confirm fields, order and images survive. Check keyboard navigation and image-viewer dismissal on your actual phone/browser. Host game now explicitly sends a temporary copy as described in `MULTIPLAYER.md`; local Save still sends nothing.
+Manual check: select the dragon starter, edit it, upload an image, Save, refresh, Export JSON, then import in another browser/profile. Confirm fields, order and images survive. Check keyboard navigation and image-viewer dismissal on your actual phone/browser. Host game explicitly sends a temporary copy; local Save still sends nothing.

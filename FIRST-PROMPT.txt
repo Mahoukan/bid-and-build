@@ -1,9 +1,0 @@
-Build Bid & Build in this folder using the supplied project documents.
-
-Read AGENTS.md, PROJECT_BRIEF.md, CODEX_PROMPTS.md and PROGRESS.md. This is a real multiplayer GitHub/Coolify project. The current requirements supersede earlier prototypes: 2–5 players including the host, no spectator role, local guest designs and themes, private-code recovery, automatic disconnection pause, and fitted landscape/portrait gameplay.
-
-Start by inspecting this folder and the installed Node/npm/Git tools. Preserve existing work. Then implement Milestone 1 from CODEX_PROMPTS.md completely. Do not just propose a plan and do not run later milestones yet.
-
-Use reasonable implementation choices and carry the milestone through implementation and verification. Run the checks that are possible, fix failures, and distinguish verified results from anything that needs my machine or manual testing. Update PROGRESS.md. Finish with the launch URL, a short manual check and a suggested commit message.
-
-I will review the milestone and then ask you to proceed to Milestone 2.
