@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import { Server } from 'socket.io';
@@ -62,7 +62,18 @@ export function createRuntime(config: AppConfig, options: { revealMs?: number } 
     res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Endpoint not found.' } });
   });
   if (config.mode === 'production') {
-    app.use(express.static(config.clientDir, { index: false, dotfiles: 'deny' }));
+    app.use(express.static(config.clientDir, { index: false, dotfiles: 'deny', setHeaders: (res, path) => {
+      if (path.endsWith('sw.js')) {
+        res.setHeader('Content-Type', 'text/javascript; charset=utf-8');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Service-Worker-Allowed', '/');
+      } else if (path.endsWith('.webmanifest')) {
+        res.setHeader('Content-Type', 'application/manifest+json');
+        res.setHeader('Cache-Control', 'no-cache');
+      } else if (path.startsWith(join(config.clientDir, 'assets') + sep)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      } else res.setHeader('Cache-Control', 'no-cache');
+    } }));
     app.get(['/', '/builder', '/admin', '/templates', '/room/:code', '/display/:code'], (req, res, next) => {
       if (!req.accepts('html')) return next();
       res.setHeader('Cache-Control', 'no-cache');

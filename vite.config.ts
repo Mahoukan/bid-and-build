@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { parseEnv } from 'node:util';
 import { defineConfig, type UserConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { pwaBuild } from './client/pwa/build.js';
 
 const envPath = fileURLToPath(new URL('./.env', import.meta.url));
 
@@ -15,7 +16,7 @@ export default defineConfig((): UserConfig => {
     root: fileURLToPath(new URL('./client', import.meta.url)),
     // Root environment is server configuration, never a client env directory.
     envDir: false,
-    plugins: [react()],
+    plugins: [react(), pwaBuild()],
     build: {
       outDir: '../dist/client', emptyOutDir: true,
       rolldownOptions: { output: { codeSplitting: { groups: [

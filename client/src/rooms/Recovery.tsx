@@ -1,13 +1,15 @@
+import { useServerReady } from '../serverConnection.js';
 import { useState } from 'react';
 import type { RoomCredentials } from '../../../shared/rooms.js';
 import { recoverSeat, replaceCode, storedSeat } from './api.js';
 
 export function RecoveryForm({ code, recovered, cancel }: { code: string; recovered: (seat: RoomCredentials) => void; cancel: () => void }) {
+  const ready = useServerReady();
   const [value, setValue] = useState(''); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
   return <section className="room-entry"><p className="eyebrow">Room {code}</p><h1>Recover your seat</h1><p>Enter your private code to take control here. Your previous device will lose control. This restores your existing seat, including in a full room.</p>
-    <form onSubmit={(event) => { event.preventDefault(); setBusy(true); setError(''); void recoverSeat(code, value).then(recovered).catch((cause: unknown) => setError(cause instanceof Error ? cause.message : 'Recovery failed.')).finally(() => setBusy(false)); }}>
+    {!ready && <p role="status">Connecting to the server. Recovery is disabled until it responds.</p>}<form onSubmit={(event) => { event.preventDefault(); setBusy(true); setError(''); void recoverSeat(code, value).then(recovered).catch((cause: unknown) => setError(cause instanceof Error ? cause.message : 'Recovery failed.')).finally(() => setBusy(false)); }}>
       <label htmlFor="private-recovery-code">Private recovery code</label><input id="private-recovery-code" type="password" autoComplete="off" spellCheck={false} maxLength={40} value={value} required onChange={(event) => setValue(event.target.value)} />
-      <button className="game-button bid-button" disabled={busy || !value.trim()}>{busy ? 'Recovering…' : 'Recover and take control'}</button>
+      <button className="game-button bid-button" disabled={busy || !ready || !value.trim()}>{busy ? 'Recovering…' : 'Recover and take control'}</button>
     </form>{error && <p role="alert">{error}</p>}<p>Keep the code private. It restores this game seat only. Drafts and appearance stay on their original device.</p><button className="game-button" disabled={busy} onClick={cancel}>Back</button>
   </section>;
 }

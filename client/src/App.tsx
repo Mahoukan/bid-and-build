@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { healthSchema } from '../../shared/health.js';
+import { checkServer, useServerReady } from './serverConnection.js';
+import { AppInstallation } from './pwa.js';
 import { AppearanceButton } from './appearance/Appearance.js';
 
 const Builder = lazy(() => import('./builder/Builder.js'));
@@ -10,29 +11,8 @@ const Admin = lazy(() => import('./admin/Admin.js'));
 const Catalogue = lazy(() => import('./admin/Catalogue.js'));
 
 function ServerStatus() {
-  const [status, setStatus] = useState<'checking' | 'ready' | 'unavailable'>('checking');
-  const [attempt, setAttempt] = useState(0);
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(5000)]);
-    void fetch('/health', { signal, cache: 'no-store' })
-      .then(async (response) => {
-        if (!response.ok) throw new Error('Server unavailable.');
-        healthSchema.parse(await response.json());
-        if (!controller.signal.aborted) setStatus('ready');
-      })
-      .catch(() => { if (!controller.signal.aborted) setStatus('unavailable'); });
-    return () => controller.abort();
-  }, [attempt]);
-  return (
-    <div className="server-status">
-      <span role="status" className={`status-label ${status}`}>
-        <span aria-hidden="true" className="status-dot" />
-        {status === 'ready' ? 'Server ready' : status === 'checking' ? 'Checking server…' : 'Server unavailable'}
-      </span>
-      {status === 'unavailable' && <button className="text-button" onClick={() => { setStatus('checking'); setAttempt(attempt + 1); }}>Retry</button>}
-    </div>
-  );
+  const ready = useServerReady();
+  return <div className="server-status"><span role="status" className={`status-label ${ready ? 'ready' : 'unavailable'}`}><span aria-hidden="true" className="status-dot" />{ready ? 'Server ready' : 'Connecting to the server. Server actions are disabled.'}</span>{!ready && <button className="text-button" onClick={() => void checkServer()}>Retry connection</button>}</div>;
 }
 
 function Home() {
@@ -92,7 +72,7 @@ export function App() {
           <Route path="*" element={<section className="panel route-shell"><h1>Page not found</h1><Link className="button primary" to="/">Back to home</Link></section>} />
         </Routes>
       </main>
-      <footer className="site-footer"><span>Made for a good time together.</span><ServerStatus /></footer>
+      <AppInstallation /><footer className="site-footer"><span>Made for a good time together.</span><ServerStatus /></footer>
     </div>
   );
 }

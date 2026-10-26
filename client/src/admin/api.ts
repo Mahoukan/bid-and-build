@@ -1,9 +1,10 @@
+import { serverRequest } from '../serverConnection.js';
 export class AdminRequestError extends Error {
   constructor(message: string, public status: number) { super(message); }
 }
 
 export async function adminRequest<T>(path: string, method = 'GET', body?: unknown, csrfToken?: string): Promise<T> {
-  const response = await fetch(path, {
+  const response = await serverRequest(path, {
     method, credentials: 'same-origin', cache: 'no-store',
     headers: { ...(method !== 'GET' ? { 'Content-Type': 'application/json' } : {}), ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}) },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),

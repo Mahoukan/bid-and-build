@@ -1,3 +1,4 @@
+import { serverRequest } from '../serverConnection.js';
 import { AppearanceButton } from '../appearance/Appearance.js';
 import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
@@ -50,7 +51,7 @@ export function GameMenu({ snapshot, seat, locked, act, close }: { snapshot: Roo
   async function display() {
     setView('display');
     try {
-      const response = await fetch(`/api/rooms/${seat.code}/display`, { method: 'POST', headers: { Authorization: `Bearer ${seat.token}`, 'Content-Type': 'application/json' }, body: '{}' });
+      const response = await serverRequest(`/api/rooms/${seat.code}/display`, { method: 'POST', headers: { Authorization: `Bearer ${seat.token}`, 'Content-Type': 'application/json' }, body: '{}' });
       if (!response.ok) throw new Error('Could not open the display. Try again.');
       const access = displayAuthSchema.parse(await response.json());
       setDisplayLink(`${location.origin}/display/${access.code}#access=${access.displayToken}`);
@@ -59,7 +60,7 @@ export function GameMenu({ snapshot, seat, locked, act, close }: { snapshot: Roo
   return <Modal title={view === 'sitOut' ? 'Sit Out this player?' : view === 'recovery' ? 'Your private recovery code' : view === 'end' ? 'End this run?' : view === 'resume' ? 'Resume with players absent?' : view === 'invite' ? 'Invite friends' : view === 'display' ? 'Shared display' : 'Game menu'} close={close}>
     <div className="dialog-body">
       {view === 'menu' && <div className="menu-actions">
-        <button className="game-button" onClick={() => setView('invite')}>Invite friends</button><button className="game-button" onClick={() => void display()}>Open shared display</button>
+        <button className="game-button" onClick={() => setView('invite')}>Invite friends</button><button className="game-button" disabled={locked} onClick={() => void display()}>Open shared display</button>
         <button className="game-button" onClick={() => setView('recovery')}>Private recovery code</button><AppearanceButton />
         {snapshot.paused && <p>{snapshot.players.filter((player) => !player.connected && !player.sittingOut).map((player) => player.name).join(', ') || 'All participating players are connected.'}{snapshot.players.some((player) => !player.connected && !player.sittingOut) ? ' — absent. ' : ' '}Only the original host can Resume. If the host is absent, they must recover their own seat.</p>}
         {host && <><h3>Host controls</h3>

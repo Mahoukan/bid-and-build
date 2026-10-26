@@ -1,3 +1,4 @@
+import { useServerReady } from '../serverConnection.js';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useBlocker } from 'react-router-dom';
 import type { AdminSession, AdminTemplate, TemplateSummary } from '../../../shared/admin.js';
@@ -16,7 +17,9 @@ export default function Admin() {
   const [templates, setTemplates] = useState<TemplateSummary[]>([]);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const ready = useServerReady();
   const [busy, setBusy] = useState(false);
+  const locked = busy || !ready;
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [showErrors, setShowErrors] = useState(false);
@@ -51,7 +54,7 @@ export default function Admin() {
   const choose = (value: AdminTemplate) => { setEditor({ saved: value, template: value.template, baseline: value.template }); setActiveIndex(0); setShowErrors(false); };
   const discard = () => !dirty || window.confirm('Discard unsaved template changes?');
   const run = async (action: () => Promise<void>) => {
-    if (busy) return;
+    if (locked) return;
     setBusy(true); setError(''); setNotice('');
     try { await action(); } catch (reason) { fail(reason); } finally { setBusy(false); }
   };
@@ -74,30 +77,30 @@ export default function Admin() {
       <h2>Administrator sign-in</h2><p>Use the account created privately by the site owner. Guests can build and host without signing in.</p>
       {editor && <p>Unsaved editor contents are still in this tab. Sign in to continue editing.</p>}
       <form onSubmit={(event) => { event.preventDefault(); const secret = password; setPassword(''); void run(async () => { setSession(await adminRequest<AdminSession>('/api/admin/login', 'POST', { username, password: secret })); }); }}>
-        <Field label="Admin username" id="admin-username"><input id="admin-username" autoComplete="username" value={username} maxLength={64} required disabled={busy} onChange={(event) => setUsername(event.target.value)} /></Field>
-        <Field label="Password" id="admin-password"><input id="admin-password" type="password" autoComplete="current-password" value={password} maxLength={128} required disabled={busy} onChange={(event) => setPassword(event.target.value)} /></Field>
-        <button className="button primary" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+        <Field label="Admin username" id="admin-username"><input id="admin-username" autoComplete="username" value={username} maxLength={64} required disabled={locked} onChange={(event) => setUsername(event.target.value)} /></Field>
+        <Field label="Password" id="admin-password"><input id="admin-password" type="password" autoComplete="current-password" value={password} maxLength={128} required disabled={locked} onChange={(event) => setPassword(event.target.value)} /></Field>
+        <button className="button primary" disabled={locked}>{busy ? 'Signing in…' : 'Sign in'}</button>
       </form>
     </section> : <>
-      <div className="builder-actions"><span>Signed in as <strong>{session.username}</strong></span><button className="button" disabled={busy} onClick={() => { if (discard()) void run(async () => { await adminRequest('/api/admin/logout', 'POST', {}, csrf); setSession({ authenticated: false }); setEditor(null); setTemplates([]); }); }}>Sign out</button></div>
-      <section className="panel admin-library" aria-label="Saved templates"><div className="builder-actions"><h2>Saved templates</h2><button className="button primary" disabled={busy} onClick={() => { if (discard()) { const template = newTemplate(); setEditor({ saved: null, template, baseline: template }); setActiveIndex(0); setShowErrors(false); setError(''); setNotice(''); } }}>New template</button><button className="button" disabled={busy} onClick={() => void run(refresh)}>Refresh list</button></div>
+      <div className="builder-actions"><span>Signed in as <strong>{session.username}</strong></span><button className="button" disabled={locked} onClick={() => { if (discard()) void run(async () => { await adminRequest('/api/admin/logout', 'POST', {}, csrf); setSession({ authenticated: false }); setEditor(null); setTemplates([]); }); }}>Sign out</button></div>
+      <section className="panel admin-library" aria-label="Saved templates"><div className="builder-actions"><h2>Saved templates</h2><button className="button primary" disabled={locked} onClick={() => { if (discard()) { const template = newTemplate(); setEditor({ saved: null, template, baseline: template }); setActiveIndex(0); setShowErrors(false); setError(''); setNotice(''); } }}>New template</button><button className="button" disabled={locked} onClick={() => void run(refresh)}>Refresh list</button></div>
         {templates.length === 0 && <p>No permanent templates yet. Create one, then publish it when ready.</p>}
-        <ul className="admin-template-list">{templates.map((item) => <li key={item.id}><button disabled={busy} aria-current={saved?.id === item.id ? 'true' : undefined} onClick={() => { if (discard()) void run(async () => choose(await adminRequest<AdminTemplate>(`/api/admin/templates/${item.id}`))); }}><strong>{item.title}</strong><span>{item.published ? 'Published' : 'Unpublished'} · {item.optionCount} options · revision {item.revision}</span></button></li>)}</ul>
+        <ul className="admin-template-list">{templates.map((item) => <li key={item.id}><button disabled={locked} aria-current={saved?.id === item.id ? 'true' : undefined} onClick={() => { if (discard()) void run(async () => choose(await adminRequest<AdminTemplate>(`/api/admin/templates/${item.id}`))); }}><strong>{item.title}</strong><span>{item.published ? 'Published' : 'Unpublished'} · {item.optionCount} options · revision {item.revision}</span></button></li>)}</ul>
       </section>
       {editor && <section aria-label="Template editor">
         <div className="builder-actions admin-editor-heading"><h2>{saved ? 'Edit template' : 'New template'}</h2><span className="tag">{saved?.published ? 'Published' : 'Unpublished'}{dirty ? ' · Unsaved changes' : ''}</span></div>
         <p className="small-note">Saving a published template updates the catalogue. Rooms already hosted retain their original content and images.</p>
-        <div className="builder-actions"><button className="button primary" disabled={busy} onClick={save}>{busy ? 'Working…' : 'Save template'}</button>
-          <button className="button" disabled={busy} onClick={() => importRef.current?.click()}>Import template JSON</button>
+        <div className="builder-actions"><button className="button primary" disabled={locked} onClick={save}>{busy ? 'Working…' : 'Save template'}</button>
+          <button className="button" disabled={locked} onClick={() => importRef.current?.click()}>Import template JSON</button>
           <input hidden ref={importRef} type="file" accept=".json,application/json" onChange={(event) => { const file = event.target.files?.[0]; event.target.value = ''; if (file && discard()) void run(async () => { if (file.size > TEMPLATE_LIMITS.jsonBytes) throw new Error('Template file is too large.'); const template = await normalizeTemplateImages(parseTemplateJson(await file.text())); setEditor({ saved, template, baseline: editor.baseline }); setActiveIndex(0); }); }} />
-          {saved && <><button className="button" disabled={busy || dirty} onClick={() => void run(async () => { choose(await adminRequest<AdminTemplate>(`/api/admin/templates/${saved.id}/publication`, 'POST', { revision: saved.revision, published: !saved.published }, csrf)); await refresh(); setNotice(saved.published ? 'Template unpublished.' : 'Template published. Guests can now host it.'); })}>{saved.published ? 'Unpublish' : 'Publish'}</button>
-            <button className="button" disabled={busy || dirty} onClick={() => void run(async () => { choose(await adminRequest<AdminTemplate>(`/api/admin/templates/${saved.id}/duplicate`, 'POST', { revision: saved.revision }, csrf)); await refresh(); setNotice('Unpublished copy created.'); })}>Duplicate template</button>
-            <button className="button danger" disabled={busy} onClick={() => { if (window.confirm(`Permanently delete “${saved.template.title}”? This also discards unsaved edits. Existing rooms keep their copy.`)) void run(async () => { await adminRequest(`/api/admin/templates/${saved.id}`, 'DELETE', { confirmed: true, revision: saved.revision }, csrf); setEditor(null); await refresh(); setNotice('Template deleted. Existing rooms are unchanged.'); }); }}>Delete template</button>
-            <button className="button" disabled={busy} onClick={() => { if (discard()) void run(async () => choose(await adminRequest<AdminTemplate>(`/api/admin/templates/${saved.id}`))); }}>Reload saved template</button></>}
+          {saved && <><button className="button" disabled={locked || dirty} onClick={() => void run(async () => { choose(await adminRequest<AdminTemplate>(`/api/admin/templates/${saved.id}/publication`, 'POST', { revision: saved.revision, published: !saved.published }, csrf)); await refresh(); setNotice(saved.published ? 'Template unpublished.' : 'Template published. Guests can now host it.'); })}>{saved.published ? 'Unpublish' : 'Publish'}</button>
+            <button className="button" disabled={locked || dirty} onClick={() => void run(async () => { choose(await adminRequest<AdminTemplate>(`/api/admin/templates/${saved.id}/duplicate`, 'POST', { revision: saved.revision }, csrf)); await refresh(); setNotice('Unpublished copy created.'); })}>Duplicate template</button>
+            <button className="button danger" disabled={locked} onClick={() => { if (window.confirm(`Permanently delete “${saved.template.title}”? This also discards unsaved edits. Existing rooms keep their copy.`)) void run(async () => { await adminRequest(`/api/admin/templates/${saved.id}`, 'DELETE', { confirmed: true, revision: saved.revision }, csrf); setEditor(null); await refresh(); setNotice('Template deleted. Existing rooms are unchanged.'); }); }}>Delete template</button>
+            <button className="button" disabled={locked} onClick={() => { if (discard()) void run(async () => choose(await adminRequest<AdminTemplate>(`/api/admin/templates/${saved.id}`))); }}>Reload saved template</button></>}
         </div>
         {dirty && saved && <p className="small-note">Save your changes before publishing or duplicating.</p>}
         <TemplateFields template={editor.template} update={(template) => setEditor({ ...editor, template })} activeIndex={activeIndex} setActiveIndex={setActiveIndex} busy={busy} upload={upload} fieldError={fieldError} />
-        <button className="button primary" disabled={busy} onClick={save}>Save template</button>
+        <button className="button primary" disabled={locked} onClick={save}>Save template</button>
       </section>}
     </>}
     <dialog ref={leaveDialog} className="panel admin-leave" aria-label="Unsaved template" onCancel={(event) => { event.preventDefault(); if (blocker.state === 'blocked') blocker.reset(); }}>{blocker.state === 'blocked' && <><h2>Leave this editor?</h2><p>Unsaved changes will be lost. Wait for any pending request to finish first.</p><div className="builder-actions"><button className="button primary" autoFocus onClick={() => blocker.reset()}>Keep editing</button><button className="button" disabled={busy} onClick={() => blocker.proceed()}>Discard and leave</button></div></>}</dialog>

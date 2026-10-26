@@ -6,6 +6,7 @@ import globals from 'globals';
 export default tseslint.config(
   { ignores: ['dist/**', 'node_modules/**', '.tools/**', '.cache/**', 'data/**'] },
   js.configs.recommended,
+  { files: ['client/pwa/sw.js'], languageOptions: { globals: { ...globals.serviceworker, __STATIC_ASSETS__: 'readonly' } } },
   ...tseslint.configs.recommended,
   {
     languageOptions: { globals: globals.node },

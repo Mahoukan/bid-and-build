@@ -53,8 +53,6 @@ Build before running administrator or database commands. Startup also applies mi
 
 SQLite (`better-sqlite3`) and Sharp use native prebuilt packages. The npm `allowScripts` policy disables an unnecessary SQLite rebuild and permits esbuild's install script. A SQLite source-build fallback needs Python 3 and a C++ toolchain (Visual Studio Desktop development with C++ on Windows; make/g++ on Debian), plus a deliberate install-policy change. Sharp's source build additionally needs its supported node-addon-api and libvips toolchain.
 
-Dependency maintenance: `npm audit --omit=dev` currently reports a high-severity denial-of-service advisory in the locked transitive `body-parser` 2.3.0 ([GHSA-27r3-jxmh-p828](https://github.com/advisories/GHSA-27r3-jxmh-p828)). Address it before the next production release.
-
 ## Playing and editing
 
 At `/builder`, select the dragon starter, create a design or import JSON, then save explicitly. Drafts live in IndexedDB; clearing site data can erase them. Export important drafts before changing browsers or origins. Hosting uploads a temporary game snapshot and its content images. Personal appearance and backgrounds are never uploaded or exported.
@@ -66,6 +64,14 @@ Hosting creates the host's player seat. Share the room link and start with 2–5
 Refresh restores a saved seat. Keep a private copy from **Game menu → Private recovery code** to transfer the same seat to another browser/device. Recovery preserves money, purchases and the original host permission, replacing the previous controller. A public room code cannot recover a seat. Another tab needs explicit takeover. Replace Code invalidates the previous recovery code; game recovery never signs in an administrator.
 
 Player disconnects pause bidding and reveals. Reconnecting does not resume: the host explicitly chooses Resume, including when proceeding with someone absent. Temporary absence preserves eligibility and binding bids. **Sit Out** is a confirmed host action for an offline, permanently departed non-host player while paused. It preserves purchases and binding bids but excludes new participation for that run; Play Again resets it. Shared-display disconnects have no effect. Interrupted games restore paused after a server restart. Rooms expire after 24 hours without player activity; a display alone does not extend expiry.
+
+## Install and update the app
+
+On the HTTPS site, choose **Install app** when your browser offers it. In Safari on iPhone/iPad, use **Share → Add to Home Screen**, then Add (enable Open as Web App if offered). Installation launches the home page; ordinary browser access still works. Normal Vite development does not register a service worker; installation can also be checked with a production build on localhost.
+
+The game requires a server connection. Only versioned public static files and a connection-required fallback are cached; API responses, credentials, content uploads and game state are never cached by the service worker. Offline launch provides a Retry connection action. Reconnect restores authoritative state; the host still explicitly resumes paused games. No bids or administrative changes are queued offline.
+
+An update notice appears outside the game. Choose **Update next launch** or **Later**. Save/export unfinished edits, then close **all** Bid and Build browser tabs and installed app windows and reopen to use the update. Updates never force a reload or take over while an old app window remains open; its cached assets stay available until it closes.
 
 ## Administrator setup
 

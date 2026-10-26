@@ -1,3 +1,4 @@
+import { serverRequest } from '../serverConnection.js';
 import { credentialsSchema, tokenSchema, type RoomCredentials } from '../../../shared/rooms.js';
 import type { GameTemplate } from '../../../shared/template.js';
 import { sha256 } from '@noble/hashes/sha2.js';
@@ -24,7 +25,7 @@ async function request(path: string, body: unknown, token?: string): Promise<Roo
   try { saved = JSON.parse(localStorage.getItem(pendingKey) ?? 'null') as SavedRequest | null; } catch { /* replace malformed local metadata */ }
   const requestKey = saved?.fingerprint === fingerprint && tokenSchema.safeParse(saved.requestKey).success ? saved.requestKey! : btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
   localStorage.setItem(pendingKey, JSON.stringify({ fingerprint, requestKey }));
-  const response = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ ...body as object, requestKey }) });
+  const response = await serverRequest(path, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ ...body as object, requestKey }) });
   const value = await response.json() as { error?: { message: string } };
   if (!response.ok) {
     if (response.status < 500 && response.status !== 429) localStorage.removeItem(pendingKey);
